@@ -1,3 +1,4 @@
 # jm-audioviz
 Our first dope audio visualizer
-Authors: Malika Kodial
+Authors: Malika Kodial, Jordan Gaskin
+ 
