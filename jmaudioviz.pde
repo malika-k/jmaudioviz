@@ -4,9 +4,10 @@ AudioIn in;
 SoundFile song;
 Waveform waveform;
 
-// need to lookup what samples actually are. Seems to effect intensity of waveform. 
+// This is the number of points we want to draw in the line
 int samples = 450;
 
+// For a button to pause/unpause song
 void toggleSong() {
   if (song.isPlaying()) {
     song.pause();
@@ -21,6 +22,7 @@ void setup() {
     song = new SoundFile(this, "Drive.mp3");
     song.play();
     
+    // Pass song into waveform object
     waveform = new Waveform(this, samples);
     waveform.input(song);
 }
@@ -32,14 +34,16 @@ void draw() {
     noFill();
     waveform.analyze();
     
+    // start drawing the line
     beginShape();
-      for(int i = 0; i < samples; i++)
+    // draw a point for each "sample"
+    for (int i = 0; i < samples; i++)
     {
       vertex(
-        map(i, 0, samples, 0, width),
-        map(waveform.data[i], -1, 1, 0, height)
+        map(i, 0, samples, 0, width), // maps the x value (i) to fit in the canvas width
+        map(waveform.data[i], -1, 1, 0, height) // maps the sound value to fit in the canvas height
       );
     }
+    // stop drawing the line
     endShape();
-   
 }
