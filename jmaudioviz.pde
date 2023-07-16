@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 // This is the number of points we want to draw in the line
 // Must be a power of 2
-int frequencyBands = 16;
+int frequencyBands = 256;
 
 // For a button to pause/unpause song
 void toggleSong() {
@@ -42,13 +42,14 @@ void draw() {
     // start drawing the line
     beginShape();
     // draw a point for each "sample"
-    // for (int i = 0; i < frequencyBands; i++)
-    // {
-    //   vertex(
-    //     map(i, 0, frequencyBands, 0, width), // maps the x value (i) to fit in the canvas width
-    //     map(waveform.data[i], -1, 1, 0, height) // maps the y value (waveform data) to fit in the canvas height
-    //   );
-    // }
+    for (int i = 0; i < frequencyBands; i++)
+    {
+      float amp = frequencyArray[i];
+      float y = map(amp, 0, 1, height, 0);
+      float x = map(i, 0, frequencyBands, 0, width);
+      line(x, height, x, y);
+      
+    }
     // stop drawing the line
     endShape();
 }
