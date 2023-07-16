@@ -3,9 +3,12 @@ Amplitude amp;
 AudioIn in;
 SoundFile song;
 Waveform waveform;
+FFT fft;
+import java.util.Arrays;
 
 // This is the number of points we want to draw in the line
-int samples = 450;
+// Must be a power of 2
+int frequencyBands = 16;
 
 // For a button to pause/unpause song
 void toggleSong() {
@@ -22,9 +25,9 @@ void setup() {
     song = new SoundFile(this, "Drive.mp3");
     song.play();
     
-    // Pass song into waveform object
-    waveform = new Waveform(this, samples);
-    waveform.input(song);
+    // Pass song into FFT object
+    fft = new FFT(this, frequencyBands);
+    fft.input(song);
 }
 
 void draw() {  
@@ -32,18 +35,20 @@ void draw() {
     stroke(255);
     strokeWeight(4);
     noFill();
-    waveform.analyze();
-    
+    // Get the array of different frequencies
+    float[] frequencyArray = fft.analyze();
+    System.out.println(Arrays.toString(frequencyArray));
+
     // start drawing the line
     beginShape();
     // draw a point for each "sample"
-    for (int i = 0; i < samples; i++)
-    {
-      vertex(
-        map(i, 0, samples, 0, width), // maps the x value (i) to fit in the canvas width
-        map(waveform.data[i], -1, 1, 0, height) // maps the sound value to fit in the canvas height
-      );
-    }
+    // for (int i = 0; i < frequencyBands; i++)
+    // {
+    //   vertex(
+    //     map(i, 0, frequencyBands, 0, width), // maps the x value (i) to fit in the canvas width
+    //     map(waveform.data[i], -1, 1, 0, height) // maps the y value (waveform data) to fit in the canvas height
+    //   );
+    // }
     // stop drawing the line
     endShape();
 }
