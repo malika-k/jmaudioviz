@@ -32,7 +32,7 @@ void draw() {
     // System.out.println(BANDWIDTH);
 
     drawBarGraph(frequencyArray);
-    drawBass();
+    drawBass(frequencyArray);
     drawVectorField();
 }
 
@@ -55,8 +55,17 @@ void drawBarGraph(float[] frequencyArray) {
     endShape();
 }
 
-void drawBass() {
-
+void drawBass(float[] frequencyArray) {
+  //start drawing the shape
+  beginShape();
+  //frequencyArray[0] = bass 
+  float amp = frequencyArray[0];
+  System.out.println(amp);
+  float c = map(amp, 0, 3, 0, 100);
+  circle(400,400, c);
+  //stop drawing the shape
+  endShape();
+  
 }
 
 void drawVectorField() {
