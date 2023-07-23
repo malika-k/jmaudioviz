@@ -8,16 +8,7 @@ import java.util.Arrays;
 
 // This is the number of points we want to draw in the line
 // Must be a power of 2
-int frequencyBands = 16;
-
-// For a button to pause/unpause song
-void toggleSong() {
-  if (song.isPlaying()) {
-    song.pause();
-  } else {
-    song.play();
-  }
-}
+int FREQ_BANDS = 8;
 
 void setup() {
     size(800,800);
@@ -26,34 +17,57 @@ void setup() {
     song.play();
     
     // Pass song into FFT object
-    fft = new FFT(this, frequencyBands);
+    fft = new FFT(this, FREQ_BANDS);
     fft.input(song);
 }
-// width of each rectangle is the width of the window divided by # of samples
 
-//width of each sample graphed as a rectangle
-
-void draw() {
-    float bandwidth = width/frequencyBands;      
+void draw() {   
     background(0);
     stroke(255);
     strokeWeight(1);
     noFill();
+
     // Get the array of different frequencies
     float[] frequencyArray = fft.analyze();
-    System.out.println(bandwidth);
+    // System.out.println(BANDWIDTH);
 
-    // start drawing the line
+    drawBarGraph(frequencyArray);
+    drawBass();
+    drawVectorField();
+}
+
+void drawBarGraph(float[] frequencyArray) {
+    // width of each rectangle is the width of the window divided by # of samples
+    float BANDWIDTH = width/FREQ_BANDS;   
+
+    // start drawing the shape
     beginShape();
-    // draw a point for each "sample"
-    for (int i = 0; i < frequencyBands; i++)
+
+    for (int i = 0; i < FREQ_BANDS; i++)
     {
       float amp = frequencyArray[i];
       float y = map(amp, 0, 1, height, 0);
-      float x = map(i, 0, frequencyBands, 0, width);
-      // rect(x, y, width, height)
-      rect(x , y, bandwidth, height);
+      float x = map(i, 0, FREQ_BANDS, 0, width);
+      //width of each sample graphed as a rectangle
+      rect(x , y, BANDWIDTH, height);
     }
-    // stop drawing the line
+    // stop drawing the shape
     endShape();
+}
+
+void drawBass() {
+
+}
+
+void drawVectorField() {
+
+}
+
+// For a button to pause/unpause song
+void toggleSong() {
+  if (song.isPlaying()) {
+    song.pause();
+  } else {
+    song.play();
+  }
 }
