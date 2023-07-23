@@ -8,7 +8,7 @@ import java.util.Arrays;
 
 // This is the number of points we want to draw in the line
 // Must be a power of 2
-int frequencyBands = 256;
+int frequencyBands = 16;
 
 // For a button to pause/unpause song
 void toggleSong() {
@@ -29,15 +29,19 @@ void setup() {
     fft = new FFT(this, frequencyBands);
     fft.input(song);
 }
+// width of each rectangle is the width of the window divided by # of samples
 
-void draw() {  
+//width of each sample graphed as a rectangle
+
+void draw() {
+    float bandwidth = width/frequencyBands;      
     background(0);
     stroke(255);
-    strokeWeight(4);
+    strokeWeight(1);
     noFill();
     // Get the array of different frequencies
     float[] frequencyArray = fft.analyze();
-    System.out.println(Arrays.toString(frequencyArray));
+    System.out.println(bandwidth);
 
     // start drawing the line
     beginShape();
@@ -47,8 +51,8 @@ void draw() {
       float amp = frequencyArray[i];
       float y = map(amp, 0, 1, height, 0);
       float x = map(i, 0, frequencyBands, 0, width);
-      line(x, height, x, y);
-      
+      // rect(x, y, width, height)
+      rect(x , y, bandwidth, height);
     }
     // stop drawing the line
     endShape();
