@@ -5,10 +5,16 @@ SoundFile song;
 Waveform waveform;
 FFT fft;
 import java.util.Arrays;
+import java.util.stream.*;
+
+VectorField vectorField;
 
 // This is the number of points we want to draw in the line
 // Must be a power of 2
 int FREQ_BANDS = 8;
+
+// the amount of points in each axis of the vector field
+int FIELD_DENSITY = 50;
 
 void setup() {
     size(800,800);
@@ -19,6 +25,9 @@ void setup() {
     // Pass song into FFT object
     fft = new FFT(this, FREQ_BANDS);
     fft.input(song);
+
+    // Set up Vector Field
+    vectorField = new VectorField();
 }
 
 void draw() {   
@@ -33,7 +42,7 @@ void draw() {
 
     drawBarGraph(frequencyArray);
     drawBass();
-    drawVectorField();
+    vectorField.drawPoints();
 }
 
 void drawBarGraph(float[] frequencyArray) {
@@ -59,8 +68,85 @@ void drawBass() {
 
 }
 
-void drawVectorField() {
+public class VectorField {
+  Point[][] field;
 
+  public VectorField() {
+    // allocate memory for the vector field
+    this.field = new Point[FIELD_DENSITY][FIELD_DENSITY];
+    // initialize each point in the vector field
+    this.initPoints();
+  }
+  
+  void initPoints() {
+    int VX = 5; // TO DO: SWITCH BACK TO 1 after normalize in draw method
+    int VY = 0;
+
+    int fieldY = 0;
+    for (int y = 0; y < height; y += (height/FIELD_DENSITY)) {
+      int fieldX = 0;
+      for (int x = 0; x < height; x += (width/FIELD_DENSITY)) {
+        Point point = new Point(x, y, VX, VY);
+        this.field[fieldX][fieldY] = point;
+        fieldX++;
+      }
+      fieldY++;
+    }
+  }
+
+  void drawPoints() {
+    for (int y = 0; y < FIELD_DENSITY; y++) {
+      for (int x = 0; x < FIELD_DENSITY; x++) {
+        Point point = this.field[x][y];
+        // point.printLocation();
+        point.draw();
+
+        x++;
+      }
+      y++;
+    }
+  }
+}
+
+public class Vector {
+    int vx;
+    int vy;
+
+    public Vector(int vx, int vy)
+    {
+      this.vx = vx;
+      this.vy = vy;
+    }
+
+    public int vx() { return this.vx; }
+    public int vy() { return this.vy; };
+}
+
+public class Point {
+  int x;
+  int y;
+  Vector vector;
+
+  public Point(int x, int y, int vx, int vy)
+  {
+    this.x = x;
+    this.y = y;
+    this.vector = new Vector(vx, vy);
+  }
+
+  void printLocation() {
+    System.out.println(String.format("(%d, %d)", this.x, this.y));
+  }
+
+  void draw() {
+    beginShape();
+    point(this.x, this.y);
+
+    // TODO: assuming vector is normalized, map vector to fill each square
+
+    line(this.x, this.y, this.x + this.vector.vx, this.y + this.vector.vy);
+    endShape();
+  }
 }
 
 // For a button to pause/unpause song
