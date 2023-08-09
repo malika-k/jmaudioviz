@@ -79,14 +79,15 @@ public class VectorField {
   }
   
   void initPoints() {
-    int VX = 5; // TO DO: SWITCH BACK TO 1 after normalize in draw method
-    int VY = 0;
+    // Set all vectors to be (5, 0)
+    int CONSTANT_X = 25; // TO DO: SWITCH BACK TO 1 after normalize in draw method
+    int CONSTANT_Y = 0;
 
     int fieldY = 0;
     for (int y = 0; y < height; y += (height/FIELD_DENSITY)) {
       int fieldX = 0;
       for (int x = 0; x < height; x += (width/FIELD_DENSITY)) {
-        Point point = new Point(x, y, VX, VY);
+        Point point = new Point(x, y, CONSTANT_X, CONSTANT_Y);
         this.field[fieldX][fieldY] = point;
         fieldX++;
       }
@@ -95,10 +96,11 @@ public class VectorField {
   }
 
   void drawPoints() {
+    // loop through all points
     for (int y = 0; y < FIELD_DENSITY; y++) {
       for (int x = 0; x < FIELD_DENSITY; x++) {
         Point point = this.field[x][y];
-        // point.printLocation();
+        // draws each point
         point.draw();
 
         x++;
