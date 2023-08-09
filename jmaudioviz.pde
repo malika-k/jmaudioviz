@@ -12,13 +12,14 @@ int FREQ_BANDS = 8;
 
 void setup() {
     size(800,800);
-    
+    colorMode(HSB);
     song = new SoundFile(this, "Drive.mp3");
     song.play();
     
     // Pass song into FFT object
     fft = new FFT(this, FREQ_BANDS);
     fft.input(song);
+ 
 }
 
 void draw() {   
@@ -46,8 +47,10 @@ void drawBarGraph(float[] frequencyArray) {
     for (int i = 0; i < FREQ_BANDS; i++)
     {
       float amp = frequencyArray[i];
+      // System.out.println(amp);
       float y = map(amp, 0, 1, height, 0);
       float x = map(i, 0, FREQ_BANDS, 0, width);
+
       //width of each sample graphed as a rectangle
       rect(x , y, BANDWIDTH, height);
     }
@@ -56,12 +59,14 @@ void drawBarGraph(float[] frequencyArray) {
 }
 
 void drawBass(float[] frequencyArray) {
-  //start drawing the shape
+  //start drawing the circle
   beginShape();
+  strokeWeight(10);
   //frequencyArray[0] = bass 
-  float amp = frequencyArray[0];
+  float amp = frequencyArray[frequencyArray.length-1];
+
   System.out.println(amp);
-  float c = map(amp, 0, 3, 0, 100);
+  float c = map(amp, 0, 0.1, 0, 400);
   circle(400,400, c);
   //stop drawing the shape
   endShape();
@@ -72,11 +77,4 @@ void drawVectorField() {
 
 }
 
-// For a button to pause/unpause song
-void toggleSong() {
-  if (song.isPlaying()) {
-    song.pause();
-  } else {
-    song.play();
-  }
-}
+
