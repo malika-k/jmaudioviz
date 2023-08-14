@@ -50,7 +50,8 @@ void drawBarGraph(float[] frequencyArray) {
       // System.out.println(amp);
       float y = map(amp, 0, 1, height, 0);
       float x = map(i, 0, FREQ_BANDS, 0, width);
-
+      float g = map(i, 0, FREQ_BANDS, 0, 255);
+      fill(g, 255, 255);
       //width of each sample graphed as a rectangle
       rect(x , y, BANDWIDTH, height);
     }
@@ -60,18 +61,35 @@ void drawBarGraph(float[] frequencyArray) {
 
 void drawBass(float[] frequencyArray) {
   //start drawing the circle
-  beginShape();
-  strokeWeight(10);
-  //frequencyArray[0] = bass 
-  float amp = frequencyArray[frequencyArray.length-1];
-
-  System.out.println(amp);
-  float c = map(amp, 0, 0.1, 0, 400);
-  circle(400,400, c);
-  //stop drawing the shape
-  endShape();
   
+  beginShape();
+  strokeWeight(5);
+  
+  //frequencyArray[frequencyArray.length - 1] = bass
+  int x = 0; 
+  for (int i = 1; i < FREQ_BANDS + 1; i++)
+  {
+    float amp = frequencyArray[frequencyArray.length - i];
+    // tmp special case for largest frequency so as to not take up the whole screen when drawing
+    if (i > 7){
+      System.out.println(amp);
+      float c = map(amp, 0, 4, 0, 100);
+      circle(750 - x, 750 - x, c);   
+    }
+    else{
+    float c = map(amp, 0, 0.1, 0, 100);
+    //start drawing circles at bottom right and move up and left for each frequency band
+    circle(750 - x, 750 - x, c);
+    x += 100;
+    float g = map(i, FREQ_BANDS, 1, 255, 0);
+    fill(g, 255, 255);
+    }
+    //stop drawing the shape
+  endShape();
+  }
+ 
 }
+
 
 void drawVectorField() {
 
