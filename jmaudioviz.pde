@@ -86,7 +86,7 @@ public class VectorField {
     int fieldY = 0;
     for (int y = 0; y < height; y += (height/FIELD_DENSITY)) {
       int fieldX = 0;
-      for (int x = 0; x < height; x += (width/FIELD_DENSITY)) {
+      for (int x = 0; x < width; x += (width/FIELD_DENSITY)) {
         Point point = new Point(x, y, CONSTANT_X, CONSTANT_Y);
         this.field[fieldX][fieldY] = point;
         fieldX++;
@@ -102,10 +102,7 @@ public class VectorField {
         Point point = this.field[x][y];
         // draws each point
         point.draw();
-
-        x++;
       }
-      y++;
     }
   }
 }
