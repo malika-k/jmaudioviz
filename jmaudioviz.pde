@@ -79,9 +79,9 @@ public class VectorField {
   }
   
   void initPoints() {
-    // Set all vectors to be (5, 0)
-    int CONSTANT_X = 25; // TO DO: SWITCH BACK TO 1 after normalize in draw method
-    int CONSTANT_Y = 0;
+    /* Must be between -1 and 1 */
+    float CONSTANT_X = -.5;
+    float CONSTANT_Y = -0.2;
 
     int fieldY = 0;
     for (int y = 0; y < height; y += (height/FIELD_DENSITY)) {
@@ -108,17 +108,26 @@ public class VectorField {
 }
 
 public class Vector {
-    int vx;
-    int vy;
+    /* Normalized vector, may be between -1 and 1 */
+    private float vx;
+    private float vy;
 
-    public Vector(int vx, int vy)
+    /* Mapped to scale of the vector field */
+    private float scaled_vx;
+    private float scaled_vy;
+
+    public Vector(float vx, float vy)
     {
       this.vx = vx;
       this.vy = vy;
+
+      /* Scale the norm values to the vector field*/ 
+      this.scaled_vx = map(abs(vx), 0, 1, 0, width/FIELD_DENSITY) * (vx >= 0 ? 1 : -1);
+      this.scaled_vy = map(abs(vy), 0, 1, 0, height/FIELD_DENSITY) * (vy >= 0 ? 1 : -1);
     }
 
-    public int vx() { return this.vx; }
-    public int vy() { return this.vy; };
+    public float vx() { return this.scaled_vx; }
+    public float vy() { return this.scaled_vy; };
 }
 
 public class Point {
@@ -126,7 +135,7 @@ public class Point {
   int y;
   Vector vector;
 
-  public Point(int x, int y, int vx, int vy)
+  public Point(int x, int y, float vx, float vy)
   {
     this.x = x;
     this.y = y;
@@ -143,7 +152,7 @@ public class Point {
 
     // TODO: assuming vector is normalized, map vector to fill each square
 
-    line(this.x, this.y, this.x + this.vector.vx, this.y + this.vector.vy);
+    line(this.x, this.y, this.x + this.vector.vx(), this.y + this.vector.vy());
     endShape();
   }
 }
