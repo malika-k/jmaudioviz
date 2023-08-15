@@ -150,6 +150,8 @@ public class Vector {
     /* Use frequency value to update the vector */
     public void update(float frequency, float deltaFrequency) {
       // Split up the freq between x and y axis
+
+      // TO DO: Use smoothing somehow
       this.vx = frequency * deltaFrequency;
       this.vy = frequency * (1-deltaFrequency);
       return;
@@ -186,9 +188,6 @@ public class Point {
   void draw() {
     beginShape();
     point(this.x, this.y);
-
-    // TODO: assuming vector is normalized, map vector to fill each square
-
     line(this.x, this.y, this.x + this.vector.vx(), this.y + this.vector.vy());
     endShape();
   }
