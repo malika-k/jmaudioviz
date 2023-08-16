@@ -9,7 +9,7 @@ import java.util.stream.*;
 
 VectorField vectorField;
 
-// This is the number of points we want to draw in the line
+// This is the number of vectors we want to draw in the line
 // Must be a power of 2
 int FREQ_BANDS = 8;
 
@@ -17,8 +17,8 @@ int FREQ_BANDS = 8;
 // Size: FREQ_BANDS
 float[] FREQ_ARRAY;
 
-// the amount of points in each axis of the vector field
-int FIELD_DENSITY = 50;
+// the amount of vectors in each axis of the vector field
+int FIELD_DENSITY = 8;
 
 void setup() {
     size(800,800);
@@ -50,7 +50,8 @@ void draw() {
 
     drawBarGraph(FREQ_ARRAY);
     drawBass();
-    vectorField.drawPoints();
+    vectorField.drawVectors();
+    vectorField.updateVectors();
 }
 
 void drawBarGraph(float[] frequencyArray) {
@@ -77,108 +78,70 @@ void drawBass() {
 }
 
 public class VectorField {
-  Point[][] field;
+  Vector[][] field;
 
   public VectorField() {
     // allocate memory for the vector field
-    this.field = new Point[FIELD_DENSITY][FIELD_DENSITY];
-    // initialize each point in the vector field
-    this.initPoints();
+    this.field = new Vector[FIELD_DENSITY][FIELD_DENSITY];
+    // initialize each vector in the vector field
+    this.initVectors();
   }
   
-  void initPoints() {
-    /* Must be between -1 and 1 */
-    float CONSTANT_X = 0;
-    float CONSTANT_Y = 0;
+  void initVectors() {
+    float defaultAngle = 0f;
 
     int fieldY = 0;
     for (int y = 0; y < height; y += (height/FIELD_DENSITY)) {
       int fieldX = 0;
       for (int x = 0; x < width; x += (width/FIELD_DENSITY)) {
-        int freqBand = this.freqRenderRule(x, y);
-        Point point = new Point(x, y, CONSTANT_X, CONSTANT_Y, freqBand);
-        this.field[fieldX][fieldY] = point;
+        int freqBand = 0;
+        Vector vector = new Vector(x, y, defaultAngle);
+        this.field[fieldX][fieldY] = vector;
         fieldX++;
       }
       fieldY++;
     }
   }
 
-  void drawPoints() {
-    // loop through all points
+  void drawVectors() {
+    // loop through all vectors
     for (int y = 0; y < FIELD_DENSITY; y++) {
       for (int x = 0; x < FIELD_DENSITY; x++) {
-        Point point = this.field[x][y];
-        // draws each point
-        point.draw();
-        point.update();
+        Vector vector = this.field[x][y];
+        // draws each vector
+        vector.draw();
       }
     }
   }
 
-  /* The rule used to determine which part of the frequency spectrum each point will represent */
-  int freqRenderRule(int x, int y) {
-    /* Rule 1: Display each frequency across x axis */
-    int freqBand = (int) map(x, 0, width, 0, FREQ_BANDS);
-    return freqBand;
+  void updateVectors() {
+    for (int y = 0; y < FIELD_DENSITY; y++) {
+      for (int x = 0; x < FIELD_DENSITY; x++) {
+        Vector vector = this.field[x][y];
+        // updates each vector
+        float newAngle = (1.0/100.0) * ((y - this.field.length/2) + (x - this.field[0].length/2)) + 0.001;
+        vector.updateAngle(newAngle);
+      }
+    }
+    
   }
 }
 
+
 public class Vector {
-    /* Normalized vector, may be between -1 and 1 */
-    private float vx;
-    private float vy;
-
-    public Vector(float vx, float vy)
-    {
-      this.vx = vx;
-      this.vy = vy;
-    }
-
-    public float vx() { 
-      return this.scale_value(this.vx); 
-    }
-    public float vy() {
-      return this.scale_value(this.vy);
-    };
-
-    /* Scale the norm values to the vector field*/ 
-    public float scale_value(float val) {
-      return map(abs(val), 0, 1, 0, width/FIELD_DENSITY) * (vx >= 0 ? 1 : -1);
-    }
-
-    /* Use frequency value to update the vector */
-    public void update(float frequency, float deltaFrequency) {
-      // Split up the freq between x and y axis
-
-      // TO DO: Use smoothing somehow
-      this.vx = frequency * deltaFrequency;
-      this.vy = frequency * (1-deltaFrequency);
-      return;
-    }
-
-    boolean hasAmplitude() {
-      return this.vx != 0 && this.vy != 0;
-    }
-}
-
-public class Point {
   int x;
   int y;
-  Vector vector;
+  float angle;
 
-  /* Part of frequency spectrum (index in FREQ_ARRAY) this point is visualizing */
+  /* Part of frequency spectrum (index in FREQ_ARRAY) this vector is visualizing */
   /* 0 <= freqBand < FREQ_BANDS */
   int freqBand;
-  float oldFrequency;
 
-  public Point(int x, int y, float vx, float vy, int freqBand)
+  public Vector(int x, int y, float angle)
   {
     this.x = x;
     this.y = y;
-    this.vector = new Vector(vx, vy);
-    this.freqBand = freqBand;
-    this.oldFrequency = 0;
+    this.angle = angle;
   }
 
   void printLocation() {
@@ -187,25 +150,25 @@ public class Point {
 
   void draw() {
     beginShape();
-    point(this.x, this.y);
-    line(this.x, this.y, this.x + this.vector.vx(), this.y + this.vector.vy());
+
+    float vectorLength = width/FIELD_DENSITY;
+
+    float startX = this.x - (vectorLength)/2.0 * cos(this.angle);
+    float startY = this.y - (vectorLength)/2.0 * sin(this.angle);
+    float endX = this.x + (vectorLength)/2.0 * cos(this.angle);
+    float endY = this.y + (vectorLength)/2.0 * sin(this.angle);	
+    line(startX, startY, endX, endY);
     endShape();
   }
 
-  /* Update the point using its own properties */
-  void update() {
-    float newFrequency = FREQ_ARRAY[this.freqBand];
-    float deltaFrequency = (this.oldFrequency - newFrequency) / this.oldFrequency;
-    this.vector.update(newFrequency, deltaFrequency);
-    this.oldFrequency = newFrequency;
-  }
-}
+  void updateAngle(float newAngle) {
+    // int xIndex = (int) map(this.x, 0, width, 0, FIELD_DENSITY);
+    // int yIndex = (int) map(this.y, 0, height, 0, FIELD_DENSITY);
 
-// For a button to pause/unpause song
-void toggleSong() {
-  if (song.isPlaying()) {
-    song.pause();
-  } else {
-    song.play();
+    // int negField = 1 - FIELD_DENSITY;
+
+    // float rule = (1.0/100.0) * negField * (xIndex + yIndex);
+
+    this.angle += newAngle;
   }
 }
