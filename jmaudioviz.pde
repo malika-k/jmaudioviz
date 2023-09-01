@@ -63,8 +63,8 @@ void drawBass(float[] frequencyArray) {
   //start drawing the circle
   
   beginShape();
-  strokeWeight(5);
-  
+  strokeWeight(4);
+
   //frequencyArray[frequencyArray.length - 1] = bass
   int x = 0; 
   for (int i = 1; i < FREQ_BANDS + 1; i++)
