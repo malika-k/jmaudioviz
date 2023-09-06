@@ -3,26 +3,27 @@ var sliderVolume;
 var sliderRate;
 var sliderPan;
 var button;
-var amp;
-
-var FREQ_BANDS;
+var fft;
+var FREQ_BANDS = 512;
 var FREQ_ARRAY = [];
-
+var w;
 
 function setup() {
-  createCanvas(600, 600);
+  createCanvas(FREQ_BANDS*2, FREQ_BANDS*2);
+  colorMode(HSB);
   //song will not play untill fully loaded
   song = loadSound("Drive.mp3", loaded);
-  amp = new p5.Amplitude();
   //slider params: range, starting point, increment by
   sliderVolume = createSlider(0, 1, 0.03, 0.01);
   sliderRate = createSlider(0, 2, 1, 0.01);
   sliderPan = createSlider(-1, 1, 0, 0.01);
+  fft = new p5.FFT();
+  //width of each rectangle
+  w = width/FREQ_BANDS
+  //fft stuff
 
-  //var for volume mapping 
-  currentVolume = sliderVolume.value();
+  //console.log(spectrum.length);
 
-  //fft = new FFT(this, FREQ_BANDS);
   //fft.input(song);  
   //FREQ_ARRAY = new float[FREQ_BANDS];
 }
@@ -48,12 +49,26 @@ function loaded() {
 
 function draw() {
   background(0);
-  var vol = amp.getLevel();
-  FREQ_ARRAY.push(vol);
-  map(vol, 0, 1, 0, 100);
-  ellipse(width/2, 300, 300, vol * 200);
+  
   song.pan(sliderPan.value());
   song.setVolume(sliderVolume.value());
   song.rate(sliderRate.value());
+
+  drawBarGraph();
+}
+
+function drawBarGraph() {
+  
+  
+  var spectrum = fft.analyze();
+  console.log(spectrum);
+  stroke(255);
+  for (var i = 0; i < spectrum.length; i++) {
+    var amp = spectrum[i];
+    var y = map(amp, 0, 256, height, 0);
+    fill(i, 255, 255)
+    rect(i*w, y, w, height-y);
+  }
+ 
 }
 
