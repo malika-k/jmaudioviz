@@ -4,7 +4,10 @@ var sliderRate;
 var sliderPan;
 var button;
 var amp;
-var currentVolume;
+
+var FREQ_BANDS;
+var FREQ_ARRAY = [];
+
 
 function setup() {
   createCanvas(600, 600);
@@ -18,7 +21,7 @@ function setup() {
 
   //var for volume mapping 
   currentVolume = sliderVolume.value();
-  
+
   //fft = new FFT(this, FREQ_BANDS);
   //fft.input(song);  
   //FREQ_ARRAY = new float[FREQ_BANDS];
@@ -45,6 +48,10 @@ function loaded() {
 
 function draw() {
   background(0);
+  var vol = amp.getLevel();
+  FREQ_ARRAY.push(vol);
+  map(vol, 0, 1, 0, 100);
+  ellipse(width/2, 300, 300, vol * 200);
   song.pan(sliderPan.value());
   song.setVolume(sliderVolume.value());
   song.rate(sliderRate.value());
