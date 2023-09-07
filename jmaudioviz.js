@@ -100,11 +100,15 @@ function drawBass() {
   for (var i = 0; i < 10; i++) {
     var amp = spectrum[i];
     console.log(amp);
-    amp = map(amp, 100, 200, 50, 100);
-    circle(400, 600 - x, amp);
-    x += 50;
-    var g = map(i, 10, 1, 255, 0);
-    fill(g, 255, 255);
+    //only graph circles when amplitude of bass notes is above 150
+    if (amp > 150) {
+      amp = map(amp, 100, 200, 50, 100);
+      circle(400, 600 - x, amp);
+      x += 50;
+      var g = map(i, 10, 1, 255, 0);
+      fill(g, 255, 255);
+    }
+
   }
   endShape();
 }
