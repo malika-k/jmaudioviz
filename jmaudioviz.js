@@ -12,8 +12,11 @@ var w;
 function setup() {
   createCanvas(800, 800);
   colorMode(HSB);
-  //song will not play untill fully loaded
-  song = loadSound("Drive.mp3", loaded);
+  
+  //2 songs to test frequencies.  
+  song = loadSound("Baby_This_Love_I_have.mp3", loaded);
+  //song = loadSound("Drive.mp3", loaded);
+
   //slider params: range, starting point, increment by
   createDiv("volume");
   sliderVolume = createSlider(0, 1, 0.03, 0.01);
