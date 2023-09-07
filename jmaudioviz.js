@@ -101,7 +101,7 @@ function drawBass() {
     amp = map(amp, 100, 200, 50, 100);
     circle(400, 600 - x, amp);
     x += 50;
-    var g = map(i, 10, 1, 0, 255);
+    var g = map(i, 10, 1, 255, 0);
     fill(g, 255, 255);
   }
   endShape();
