@@ -69,8 +69,10 @@ function draw() {
   
   drawBarGraph();
   //---------------BASS COMMENTED OUT BECAUSE FOR SOME REASON IT MESSES WITH THE COLORMODE(HSB)-----------
+  //-----------------
   //drawBass();
-
+  //-----------------
+  //-----------------------------------
 }
 
 //function for bar graph visualization
