@@ -25,32 +25,8 @@ function setup() {
   bassfft = new p5.FFT();
   //width of each rectangle
   w = width/FREQ_BANDS
-  //fft stuff
-
-  //console.log(spectrum.length);
-
-  //fft.input(song);  
-  //FREQ_ARRAY = new float[FREQ_BANDS];
 }
 
-//pause/resume button
-function togglePlaying() {
-  if (song.isPlaying()) {
-    song.pause();
-    button.html("Resume");
-  }
-  else {
-    song.play();
-    button.html("Pause");
-  }
-  
-}
-
-//reset song 
-function toggleReset() {
-  song.stop();
-  song.play();
-}
 //callback function. pause button doens't load until the sound does
 function loaded() {
   song.play();
@@ -68,14 +44,33 @@ function draw() {
   song.pan(sliderPan.value());
   
   drawBarGraph();
-  //---------------BASS COMMENTED OUT BECAUSE FOR SOME REASON IT MESSES WITH THE COLORMODE(HSB)-----------
+  //---------------BASS MESSES WITH COLORMODE.  DONT KNOW WHY YET----------------------
   //-----------------
-  //drawBass();
+  drawBass();
   //-----------------
   //-----------------------------------
 }
 
-//function for bar graph visualization
+// play|pause 
+function togglePlaying() {
+  if (song.isPlaying()) {
+    song.pause();
+    button.html("Resume");
+  }
+  else {
+    song.play();
+    button.html("Pause");
+  }
+  
+}
+
+//reset song 
+function toggleReset() {
+  song.stop();
+  song.play();
+}
+
+//'bar graph' visualization
 function drawBarGraph() {
   
   beginShape();
@@ -83,7 +78,8 @@ function drawBarGraph() {
   var spectrum = fft.analyze();
   //console.log(spectrum);
   stroke(255);
-  for (var i = 0; i < spectrum.length; i++) {
+  //start loop at 11 because 0-10 are bass frequencies visualized by circles
+  for (var i = 11; i < spectrum.length; i++) {
     
     var amp = spectrum[i];
     var y = map(amp, 0, 256, height, 0);
@@ -93,13 +89,14 @@ function drawBarGraph() {
   endShape();
 }
 
+//circular visualization of bass frequencies
 function drawBass() {
   var x = 0
   beginShape();
   strokeWeight(4);
   
   var spectrum = bassfft.analyze();
-  //when specturm[i] >= 100, draw circles for bassy hits
+  
   for (var i = 0; i < 10; i++) {
     var amp = spectrum[i];
     console.log(amp);
