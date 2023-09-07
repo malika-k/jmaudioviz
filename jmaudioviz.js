@@ -15,8 +15,11 @@ function setup() {
   //song will not play untill fully loaded
   song = loadSound("Drive.mp3", loaded);
   //slider params: range, starting point, increment by
+  createDiv("volume");
   sliderVolume = createSlider(0, 1, 0.03, 0.01);
+  createDiv("playback speed");
   sliderRate = createSlider(0, 2, 1, 0.01);
+  createDiv("audio panning");
   sliderPan = createSlider(-1, 1, 0, 0.01);
   fft = new p5.FFT();
   bassfft = new p5.FFT();
@@ -60,7 +63,6 @@ function loaded() {
 
 function draw() {
   background(0);
-  
   song.setVolume(sliderVolume.value());
   song.rate(sliderRate.value());
   song.pan(sliderPan.value());
