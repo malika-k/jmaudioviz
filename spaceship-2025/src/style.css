@@ -1,0 +1,46 @@
+:root {
+  --action-bar-height: 24pxpx;
+
+  --padding-small: 4px;
+  --padding-medium: 8px;
+  --padding-large: 16px;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+body {
+  margin: 0;
+  overflow: hidden;
+}
+canvas {
+  display: block;
+}
+
+#top-bar {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  height: var(--action-bar-height);
+  width: 100%;
+}
+
+#top-bar-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--padding-medium);
+}
+
+.action-button {
+  display: flex;
+  padding: var(--padding-medium);
+  background-color: transparent;
+  border: 1px solid white;
+}
+
+.action-button ion-icon {
+  color: white;
+}
